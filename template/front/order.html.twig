@@ -1,0 +1,282 @@
+{% extends "base.html.twig" %}
+{% import "form_macro.html.twig" as form %}
+{% set suffix_val = "_order" %}
+
+{% block title %}
+    Commande
+{% endblock %}
+
+{% block main %}
+    <h2>Commande</h2>
+    
+    {# DIV MSG : if success, msg_regist will not be an array ; if error, message will be in an array (also used to persist/empty inputs values) #}
+    {% if msg_edit_qty and msg_edit_qty is iterable %}
+        <div class="d-flex justify-content-center align-items-center"><div class="msg{{suffix_val}} badge badge-pill mb-3" id="msg{{suffix_val}}">{{msg_edit_qty.error}}</div></div>
+    {% elseif max_order_qty - total_qty <= 0 %}
+        <div class="d-flex justify-content-center align-items-center"><div class="msg{{suffix_val}} badge badge-pill mb-3" id="msg{{suffix_val}}">Commande max atteinte (quantité totale : {{max_order_qty}})</div></div>
+    {% endif %}
+
+    {# BLOCK_TABS #}
+    <section class="block_tabs" id="block_tabs{{suffix_val}}">
+        <ul class="nav nav-tabs mb-3" id="tabs{{suffix_val}}" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="tab-en-cours" data-toggle="tab" href="#en-cours" role="tab" aria-controls="en-cours" aria-selected="true">En cours</a>
+            </li>
+            {% if session.user %}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="tab-en-attente" data-toggle="tab" href="#en-attente" role="tab" aria-controls="en-attente" aria-selected="false">En attente (validée)</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="tab-historique" data-toggle="tab" href="#historique" role="tab" aria-controls="historique" aria-selected="false">Historique</a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="tab-content px-2" id="tab_content{{suffix_val}}">
+            {# 1st TAB : EN COURS #}
+            <div class="tab-pane fade show active" id="en-cours" role="tabpanel" aria-labelledby="tab-en-cours">
+                <div class="en-cours position-relative d-flex flex-wrap justify-content-around">
+                    {% if not session.current_order %}
+                        <div class="empty_order text-center">
+                            <p class="line-height-1 mt-xl-5 my-3 mb-4 pb-2">Vous n'avez pas de commande en cours<br><br>Il ne commencerait pas à faire faim...?</p>
+                            <button class="button" onclick="window.location.href='carte'">Commander</button>
+                            <img class="img_empty_order d-none d-sm-block" id="img_empty_order_pizza" src="public/img/pizza_5.png" alt="part de pizza">
+                            <img class="img_empty_order d-none d-sm-block" id="img_empty_order_fork" src="public/img/Daco_5697108.png" alt="fourchette de spaghettis">
+                        </div>
+                    {% else %}
+                        <div class="col-sm-10 col-lg-6 col-xxl-5 pr-0 pr-lg-5 pl-0">
+                            <ul>
+                                {% for category in categories %}
+                                    <h4 class="small font-weight-bold mt-2 mb-1">{{category|upper}}</h4>
+
+                                    {% for product in session.current_order %}
+                                        {% if product.category == category %}
+                                            <li class="product line-height-1 d-flex justify-content-end align-items-center mb-3 mb_product">
+                                                {% if product.is_vegetarian != 0 and product.category != "boissons" %}
+                                                    <img class="veg_pict" src="public/img/vegetarian.png" alt="logo plat végétarien">
+                                                {% endif %}
+
+                                                <div class="product_det pl-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <p class="product_name pr-2">{{product.name}}</p>
+                                                        <p class="product_price"><span class="red">{{product.quantity}}</span><span class="red pr-2"> x </span>{{product.price_ttc}}&nbsp;€</p>
+                                                    </div>
+                                                    <small>
+                                                        <a class="a_text font-italic text-decoration-none" href="" data-toggle="modal" data-target="#orderModal_{{product.id}}">Modifier</a>
+                                                    </small>
+                                                    <form action="commande?delete={{product.id}}" method="POST" class="form_delete_product{{suffix_val}} pl-4">
+                                                        {{ form.token }}
+                                                        <button type="submit" class="delete_product{{suffix_val}} font-italic" name="delete" value="product">Supprimer</button>
+                                                    </form>
+                                                </div>
+                                                    
+                                                {# MODAL ORDER #}
+                                                <div class="orderModal modal fade" id="orderModal_{{product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-bottom-0">
+                                                                <h3 class="modal-title text-center">Modifier la quantité</h3>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">×</span>
+                                                                    {# <span aria-hidden="true">&times;</span> #}
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                {# DIV MSG #}
+                                                                <div class="d-flex justify-content-center align-items-center"><div class="msg{{suffix_val}} badge badge-pill mb-2"></div></div>
+
+                                                                {% if product.category != "pates" %}
+                                                                    <h4 class="small font-weight-bold mt-2 text-center">{{product.category|upper [0:product.category|length - 1]}}</h4>
+                                                                {% else %}
+                                                                    <h4 class="small font-weight-bold mt-2 text-center">{{product.category|upper}}</h4>
+                                                                {% endif %}
+
+                                                                <div class="product_det_modal col-10 px-3 px-sm-5 py-3 mx-auto">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <p class="product_name">{{product.name}}</p>
+                                                                        <p class="product_price"><span>{{product.price_ttc}}</span>&nbsp;€</p>
+                                                                    </div>
+                                                                    <small class="product_ingredients font-italic">{{product.ingredients}}</small>
+                                                                </div>
+
+                                                                {# FORM #}
+                                                                <form action="commande?edit={{product.id}}" method="POST" data-max_order_qty="{{max_order_qty}}" class="needs-validation mx-5 my-3" novalidate>
+                                                                    {{ form.token }}
+
+                                                                    <div class="row justify-content-around align-items-center">
+                                                                        <div class="col-sm-4 d-flex justify-content-center align-items-end p-0">
+                                                                            <img class="symbol_qty minus_symbol" src="public/img/symbol-.png" alt="symbole quantité moins">
+                                                                            
+                                                                            {{ form.input({name: "quantity", value: product.quantity, type: "number", error_text: msg_order.quantity}, {class: "col-4 col-sm-6 order_qty", class_input: "text-center", suffix: suffix_val, data: "data-qty="~ product.quantity ~" data-max_product_qty="~ max_product_qty}, "required", "readonly") }}
+
+                                                                            <img class="symbol_qty plus_symbol" src="public/img/symbol+.png" alt="symbole quantité plus">
+                                                                        </div>
+
+                                                                        {{ form.button_edit({suffix: suffix_val, name: "edit", value: "quantity"}) }}
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+
+                            <form action="commande" method="POST" class="form_delete_current_order mt-3">
+                                {{ form.token }}
+                                {# <button type="submit" class="button btn btn_reset" name="delete" value="current_order">Supprimer tout</button> #}
+                                <button type="submit" class="small font-italic" name="delete" value="current_order">Supprimer tout</button>
+                            </form>
+                        </div>
+
+                        <div class="col-sm-10 col-lg-6 col-xxl-5 mt-5 mt-lg-0 pl-0 pl-lg-5 pr-0">
+                            <h4 class="small font-weight-bold mt-2 mb-1">RECEPTION</h4>
+
+                            <form action="commande" method="POST" class="needs-validation" id="form_create{{suffix_val}}">
+                                {{ form.token }}
+
+                                <div class="reception_time row mb-3 justify-content-between align-items-end">
+                                    <div class="col-6 col-lg-5 p-0">         {# Limited to 1 month max #}
+                                        {{ form.input({name: "reception_date", label: "pour quand ?", value: msg_create_order and msg_create_order is not iterable ? "" : post.reception_date, type: "date", error_text: msg_create_order.reception_date}, {class: "", suffix: suffix_val}, "required") }}
+                                    </div>
+                    
+                                    <div class="row col-9 col-sm-5 col-lg-6 justify-content-between">
+                                        {{ form.select({name: "reception_hour", perso_values: {"12": "12 h", "13": "13 h", "19": "19 h", "20": "20 h"}, selected: msg_create_order and msg_create_order is not iterable ? "" : post.reception_hour, error_text: msg_create_order.reception_hour}, {class: "col-5", suffix: suffix_val, placeholder:"heure"}, "required") }}
+
+                                        {{ form.select({name: "reception_minutes", perso_values: {"00": "00", "15": "15", "30": "30", "45": "45"}, selected: msg_create_order and msg_create_order is not iterable ? "" : post.reception_minutes, error_text: msg_create_order.reception_minutes}, {class: "col-5", suffix: suffix_val, placeholder:"min"}, "required") }}
+                                    </div>
+                                </div>
+
+                                {{ form.textarea({name: "comment", label: "commentaires", value: msg_create_order and msg_create_order is not iterable ? "" : post.comment, error_text: msg_create_order.comment, rows:"2"}, {class: "mb_3", class_input: "textarea", suffix: suffix_val, placeholder:"spaghettis, tagliatelles ou pennés \n sans oignons, etc..."}) }}
+            
+                                {{ form.select({name: "type", values: session.user.status == "admin" ? enum_type : enum_type|filter(v => v != "salle"), selected: msg_create_order and msg_create_order is not iterable ? "" : post.type, error_text: msg_create_order.type}, {class: "col-sm-6 col-lg-5 p-0 mb_3", suffix: suffix_val}, "required") }}
+
+                                <div class="mb-3 mt-5 mt-lg-4">
+                                    <h4 class="small font-weight-bold mt-2 mb-1">RECAPITULATIF</h4>
+
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <p class="pl_25 pr-2">Total <span class="if_take-away"> à payer <small class="font-italic">(à réception de commande)</small></span></p>
+                                        <p class="order_price">
+                                            {% set order_price = 0 %}
+                                            {% for product in session.current_order %}
+                                                {% set order_price = order_price + product.quantity * product.price_ttc %}
+                                            {% endfor %}
+                                            {{(order_price)|number_format(2)}}&nbsp;€
+                                        </p>
+                                    </div>
+
+                                    <div class="if_delivery">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <p class="pl_25 pr-2">Livraison</p>
+                                            <p class="delivery_price">
+                                                {% set delivery_price = 4.90 %}
+                                                {{(delivery_price)|number_format(2)}}&nbsp;€
+                                            </p>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <p class="pl_25 pr-2">Total à payer <small class="font-italic">(à réception de commande)</small></p>
+                                            <p class="total_price">
+                                                {% set total_price = order_price + delivery_price %}
+                                                {{(total_price)|number_format(2)}}&nbsp;€
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <small class="pl_25 red font-italic">{{(order_price)|number_format(2) [0:(order_price)|number_format(2)|length - 3]}} points de fidélité</small>
+                                </div>                      {# PREVOIR UTILISATION BON REDUC POINTS FIDELITE #}
+
+                                <div class="row col-md-10 justify-content-center align-items-center mx-auto">
+                                    {{ form.button_save({suffix: suffix_val, name: "create", value: "order"}) }}
+                                </div>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if session.user %}
+                {# 2nd TAB : EN ATTENTE #}
+                <div class="tab-pane fade" id="en-attente" role="tabpanel" aria-labelledby="tab-en-attente">
+                    <p class="small text-center pb-5">Vous avez la possibilité de modifier ou annuler vos commandes jusqu'à 2h avant le début du service, soit 10h pour le midi et 17h pour le soir</p>
+
+                    <div class="en-attente d-flex justify-content-around">
+                        <p class="red text-center my-5">Vous n'avez pas de commande en attente</p>
+                        {% for order in orders %}
+                            {# {% if order.is_delivered != 0 %}
+                                <p class="red text-center my-5">Vous n'avez pas de commande en attente</p>
+                            {% else %} #}
+                                
+                    {# IF DELAI + VERIF ID USER QUI SUPPRIME EST BIEN = USER_ID ORDER... #}
+                                <form action="commande?delete={{order.id}}" method="POST" class="form_edit{{suffix_val}}">
+                                    {{ form.token }}
+                                    {{ form.button_edit({suffix: suffix_val}) }}
+                                    {{ form.button_delete({suffix: suffix_val, this_element: 'la commande "' ~ order.ref ~ '"'}) }}
+                                </form>
+
+                            {# {% endif %} #}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {# 3rd TAB : HISTORIQUE #}
+                <div class="tab-pane fade" id="historique" role="tabpanel" aria-labelledby="tab-historique">
+                    <div class="historique">
+                        {% if not orders %}
+                            <p class="mt-4 pt-2 pb-5"></p>
+                            <p class="red text-center my-5">Vous n'avez pas encore de commande passées</p>
+                        {% else %}
+                            <div class="d-flex justify-content-center align-items-center pb-3">
+                                <p class="small text-center">Dîtes-nous comment s'est passé votre commande : </p>
+                                <button class="button mt-0 mr-0" onclick="window.location.href='avis-clients'">Laisser&nbsp;un&nbsp;avis</button>
+                            </div>
+
+                            <ul class="col-md-6 p-0">
+                                {# {% for order in orders %}
+                                    {% if order.is_delivered != 0 %} #}
+                                        <li class="passed_order line-height-1 d-flex flex-column justify-content-center align-items-end mb-3 mb_passed_order">
+                                            <h4 class="small font-weight-bold w-100 mt-2 mb-1">{{order.tms|date("d/m/Y")}}</h4>
+
+                                            <div class="order_det pl-2">
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="order_ref pr-2">Commande L21085486{{order.ref}}</p>
+                                                    <p class="order_price">228.88{{order.total_price_ttc}}&nbsp;€</p>
+                                                </div>
+                                                <small>
+                                                    <a class="a_text font-italic text-decoration-none" href="" data-toggle="modal" data-target="#orderModal_{{product.id}}">Voir détail</a>
+                                                </small>
+                                            </div>
+                                        </li>
+                                    {# {% endif %}
+                                {% endfor %} #}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
+
+
+{# JS #}
+{% block javascript %}
+    <script>
+        $(".reception_time option").each(function() {
+            $(this).text($(this).text().toLowerCase());
+        });
+    </script>
+
+    {% if not session.user.id %}
+        <script> 
+            $('#form_create_order').on("submit", function(e) {
+                e.preventDefault();
+                $('#loginModal').modal('show');
+            }); 
+        </script>
+    {% endif %}
+{% endblock %}

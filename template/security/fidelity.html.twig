@@ -1,0 +1,52 @@
+{% extends "base.html.twig" %}
+{% set suffix_val = "_fidelity" %}
+
+{% block title %}
+    Avantages fidélité
+{% endblock %}
+
+{% block main %}
+    <h2>Avantages fidélité</h2>
+
+    <article class="fidelity text-center">
+        <p class="mt-5 mb-4">
+            Vous avez actuellement <span class="red font-weight-bold">{{session.user.fidelity}}&nbsp;{% if session.user.fidelity > 1 %}points{% else %}point{% endif %}</span>.
+            {% if session.user.fidelity < 100 %}
+                {% set points = 100 - session.user.fidelity %}
+                <br><small class="font-italic">Encore {{points}} {% if points > 1 %}points{% else %}point{% endif %} avant d'obtenir la prochaine réduction.</small>
+            {% else %}
+                <br><small class="font-italic">Vous pouvez dès à présent utiliser vos points pour obtenir une réduction de
+                    {% if session.user.fidelity >= 100 and session.user.fidelity < 200 %}
+                        5&nbsp;€.
+                    {% elseif session.user.fidelity >= 200 and session.user.fidelity < 400 %}
+                        10&nbsp;€.
+                    {% elseif session.user.fidelity >= 400 %}
+                        20&nbsp;€.
+                    {% endif %}
+                </small>
+            {% endif %}
+        </p>
+
+        <p class="my-3">Votre fidélité est récompensée avec notre programme fidélité&nbsp;!<br>Vous cumulez des points à chaque visite, commande ou réservation en ligne via votre compte, pour ensuite bénéficier de réductions immédiates sur votre prochaine facture.</p>
+
+        <p class="my-3 mt-4" style="font-size: 120%;">1 € dépensé = 1 point<br>1 réservation en ligne honorée = 5 points</p>
+
+        <div class="fidelity_scale d-flex flex-wrap justify-content-around align-items-center">
+            <div class="d-flex align-items-center mx-3 mt-3 mb-0">
+                <p class="red line-height-1 pt-2">100 points</p>
+                <span class="mx-2"> = </span>
+                <p class="red line-height-1 p-2">5 euros</p>
+            </div>
+            <div class="d-flex align-items-center mx-3 mt-3 mb-0">
+                <p class="red line-height-1 pt-2">200 points</p>
+                <span class="mx-2"> = </span>
+                <p class="red line-height-1 p-2">10 euros</p>
+            </div>
+            <div class="d-flex align-items-center mx-3 mt-3 mb-0">
+                <p class="red line-height-1 pt-2">400 points</p>
+                <span class="mx-2"> = </span>
+                <p class="red line-height-1 p-2">20 euros</p>
+            </div>
+        </div>
+    </article>
+{% endblock %}

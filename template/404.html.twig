@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+{% set suffix_val = "_error" %}
+
+{% block title %}
+    Erreur 404 !
+{% endblock %}
+
+{% block main %}
+    <h2>Page non trouvée</h2>
+
+    <section class="error_404">
+        <div class="d-flex justify-content-center align-items center">
+            4
+            <img class="align-self-center mx-2" src="public/img/pizza_2.png" alt="erreur 404 not found">
+            4
+        </div>
+
+        <p class="text-center">Retour à la <a class="a_text" href="{{home}}">page d'accueil</a></p>
+    </section>
+{% endblock %}

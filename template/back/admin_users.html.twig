@@ -1,0 +1,70 @@
+{% extends "base.html.twig" %}
+{% import "form_macro.html.twig" as form %}
+{% set suffix_val = "_admin_users" %}
+
+{% block title %}
+    BackOffice | Gestion utilisateurs
+{% endblock %}
+
+{% block main %}
+    <h2>Gestion utilisateurs</h2>
+
+    {# DIV MSG #}
+    {% if msg_admin_users and msg_admin_users is not iterable %}
+        <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill mb-3" id="msg{{suffix_val}}">{{msg_admin_users}}</div></div>
+    {% elseif msg_admin_users and msg_admin_users is iterable %}
+        <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill mb-3" id="msg{{suffix_val}}">{{msg_admin_users.error}}</div></div>
+    {% endif %}
+    
+    {# TABLE USERS #}
+    <div class="overflow_table">
+        <table class="table table-striped text-center table_admin" id="table{{suffix_val}}">
+            <tr class="align-middle">
+                <th class="align-middle font-weight-bold">UTILISATEUR</th>
+                <th class="align-middle font-weight-bold">EMAIL</th>
+                <th class="align-middle font-weight-bold">TELEPHONE</th>
+                <th class="align-middle font-weight-bold">FIDELITE</th>
+                <th class="align-middle font-weight-bold">STATUT</th>
+                
+                <th class="align-middle font-weight-bold" colspan="2">ACTION</th>
+            </tr>
+
+            {% if users is iterable %}
+                {% for user in users %}
+                    <tr class="align-middle">
+                        <td class="align-middle">{{user.last_name ~ " " ~ user.first_name}}</td>
+                        <td class="align-middle">{{user.email}}</td>
+                        <td class="align-middle">{{user.phone}}</td>
+
+                        <form action="admin-utilisateurs?edit={{user.id}}" method="POST" class="form_edit{{suffix_val}}">
+                            <td class="align-middle col_status">
+                                {{ form.token }}
+                                {{ form.input({name: "fidelity", value: user.fidelity, type: "number", error_text: get.edit == user.id ? msg_admin_users.fidelity : ""}, {class: "col-12", class_input: "form-control-plaintext fidelity_admin_users mx-auto", suffix: suffix_val}, "required", "disabled") }}
+                            </td>
+                            <td class="align-middle">
+                                {{ form.select({name: "status", values: enum_status, selected: user.status, error_text: get.edit == user.id ? msg_admin_users.status : ""}, {class: "col-12", class_input: "form-control-plaintext status_admin_users mx-auto", suffix: suffix_val}, "required", "disabled") }}
+                            </td>
+                            <td class="align-middle">
+                                <button type="button" class="btn_img btn_img_edit">
+                                    <img src="public/img/edit.png" alt="icone bouton de modification">
+                                </button>
+                                {{ form.button_img_save({suffix: suffix_val}) }}
+                            </td>
+                        </form>
+                        
+                        <td class="align-middle">
+                            <form action="admin-utilisateurs?delete={{user.id}}" method="POST" class="form_delete{{suffix_val}}">
+                                {{ form.token }}
+                                {{ form.button_img_delete({suffix: suffix_val, this_element: "cet utilisateur : " ~ user.last_name ~ " " ~ user.first_name}) }}
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% elseif users is not iterable %}
+                <tr class="align-middle">
+                    <td class="align-middle" colspan="6" style="font-size: 120%; color: #8c051e;">{{users}}</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

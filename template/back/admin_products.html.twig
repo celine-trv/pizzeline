@@ -1,0 +1,141 @@
+{% extends "base.html.twig" %}
+{% import "form_macro.html.twig" as form %}
+{% set suffix_val = "_admin_products" %}
+
+{% block title %}
+    BackOffice | Gestion carte / menu
+{% endblock %}
+
+{% block main %}
+    <h2>Gestion carte / menu</h2>
+
+    {# DIV MSG #}
+    {% if msg_admin_products and msg_admin_products is not iterable %}
+        <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill mb-3" id="msg{{suffix_val}}">{{msg_admin_products}}</div></div>
+    {% elseif msg_admin_products and msg_admin_products is iterable %}
+        <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill mb-3" id="msg{{suffix_val}}">{{msg_admin_products.error}}</div></div>
+    {% elseif edited_product.error %}
+        <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill mb-3" id="msg{{suffix_val}}">{{edited_product.error}}</div></div>
+    {% endif %}
+
+    <section class="form_admin_section">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">×</span>
+            {# <span aria-hidden="true">&times;</span> #}
+        </button>
+
+        {% if get.edit %}
+            <h3 class="text-center h3_admin">Modification produit "{{edited_product.name}}"</h3>
+        {% else %}
+            <h3 class="text-center h3_admin">Nouveau produit</h3>
+        {% endif %}
+        
+        {# FORM #}
+        <form {% if get.edit %} action="admin-carte?edit={{edited_product.id}}" {% else %} action="admin-carte" {% endif %} method="POST" class="needs-validation col-xl-8 col-lg-10 p-0 mx-auto my-3 mt-4" id="form{{suffix_val}}" novalidate>
+            {{ form.token }}
+
+            <div class="row col-md-10 m-auto">
+                {{ form.input({name: "name", label: "le nom", value: get.edit and not post ? edited_product.name : msg_admin_products and msg_admin_products is not iterable ? "" : post.name, type: "text", error_text: msg_admin_products.name}, {class: "col-sm-6", suffix: suffix_val, placeholder:"Nom du produit"}, "required") }}
+                
+                {{ form.select({name: "category", label: "la catégorie", values: enum_category, selected: get.edit and not post ? edited_product.category : msg_admin_products and msg_admin_products is not iterable ? "" : post.category, error_text: msg_admin_products.category}, {class: "col-sm-6", suffix: suffix_val}, "required") }}
+            </div>
+
+            <div class="row col-md-10 m-auto">
+                {{ form.input({name: "ingredients", label: "les ingrédients", value: get.edit and not post ? edited_product.ingredients : msg_admin_products and msg_admin_products is not iterable ? "" : post.ingredients, type: "text", error_text: msg_admin_products.ingredients}, {class: "col-sm-12", suffix: suffix_val, placeholder:"Liste des ingrédients"}, "required") }}
+            </div>
+
+            <div class="row col-md-10 m-auto">
+                {{ form.input({name: "menu_number", label: "num menu", value: get.edit and not post and edited_product.menu_number != NULL ? edited_product.menu_number : msg_admin_products and msg_admin_products is not iterable ? "" : post.menu_number, type: "number", error_text: msg_admin_products.menu_number}, {class: "col-sm-3 col-6", suffix: suffix_val, placeholder:"option"}) }}
+
+                {{ form.select({name: "tva", label: "tva", perso_values: {"0.100": "10% (alimentaire)", "0.200": "20% (alcool)", "0.055": "5,5% (boisson conditionnée / hermétique)"}, selected: get.edit and not post ? edited_product.tva : msg_admin_products and msg_admin_products is not iterable ? "" : post.tva, error_text: msg_admin_products.tva}, {class: "col-sm-3 col-6", suffix: suffix_val}, "required") }}
+                
+                {{ form.input({name: "price_ttc", label: "prix TTC", value: get.edit and not post ? edited_product.price_ttc : msg_admin_products and msg_admin_products is not iterable ? "" : post.price_ttc, type: "text", error_text: msg_admin_products.price_ttc}, {class: "col-sm-3 col-6", suffix: suffix_val, placeholder:"Prix ttc"}, "required") }}
+                
+                {{ form.input({name: "price_ht", label: "prix HT", value: get.edit and not post ? edited_product.price_ht : msg_admin_products and msg_admin_products is not iterable ? 0 : post ? post.price_ht : 0, type: "text", error_text: msg_admin_products.price_ht}, {class: "col-sm-3 col-6", class_label: "price_ht_label", suffix: suffix_val}, "required", "readonly") }}
+            </div>
+                
+            <div class="row col-md-10 m-auto">
+                {{ form.radio({name: "is_vegetarian", label: "végétarien ?", error_text: msg_admin_products.is_vegetarian, checked: get.edit and not post ? edited_product.is_vegetarian : msg_admin_products is iterable ? post.is_vegetarian}, {class: "col-6", suffix: suffix_val}, "required") }}
+
+                {{ form.radio({name: "is_orderable", label: "au menu ?", error_text: msg_admin_products.is_orderable, checked: get.edit and not post ? edited_product.is_orderable : msg_admin_products is iterable ? post.is_orderable}, {class: "col-6", suffix: suffix_val}, "required") }}
+            </div>
+
+            <div class="col-md-10 mx-auto my-2 div_small">
+                <span>*</span><small>Tous les champs sont obligatoires</small>
+            </div>
+
+            <div class="row col-md-10 justify-content-center align-items-center mx-auto" id="row_btn_reset{{suffix_val}}">
+                {{ form.button_reset({suffix: suffix_val}) }}
+
+                {% if get.edit %}
+                    {{ form.button_edit({suffix: suffix_val, name: "action", value: "edit"}) }}
+                {% else %}
+                    {{ form.button_add({suffix: suffix_val, name: "action", value: "add"}) }}
+                {% endif %}
+            </div>
+        </form>
+    </section>
+
+    <div class="row col-md-10 justify-content-center align-items-center mx-auto">
+        <button type="button" class="button btn btn_new_admin" id="btn_new{{suffix_val}}">Ajouter produit</button>
+    </div>
+
+    {% if products is iterable and products|length == 1 %}
+        <div class="counter_registered">{{products|length}} produit enregistré</div>
+    {% elseif products is iterable and products|length > 1 %}
+        <div class="counter_registered">{{products|length}} produits enregistrés</div>
+    {% endif %}
+
+    {# TABLE PRODUCTS #}
+    <div class="overflow_table">
+        <table class="table table-striped text-center table_admin mt-3" id="table{{suffix_val}}">
+            <tr class="align-middle">
+                <th class="align-middle font-weight-bold">NOM</th>
+                <th class="align-middle font-weight-bold">CATEGORIE</th>
+                <th class="align-middle font-weight-bold">INGREDIENTS</th>
+                <th class="align-middle font-weight-bold">PRIX HT</th>
+                <th class="align-middle font-weight-bold">TVA</th>
+                <th class="align-middle font-weight-bold">PRIX TTC</th>
+                <th class="align-middle font-weight-bold">NUM MENU</th>
+                <th class="align-middle font-weight-bold">VEGETARIEN&nbsp;?</th>
+                <th class="align-middle font-weight-bold">AU MENU&nbsp;?</th>
+                
+                <th class="align-middle font-weight-bold" colspan="2">ACTION</th>
+            </tr>
+
+            {% if products is iterable %}
+                {% for product in products %}
+                    <tr class="align-middle">
+                        <td class="align-middle">{{product.name}}</td>
+                        <td class="align-middle">{{product.category|title}}</td>
+                        <td class="align-middle">{{product.ingredients}}</td>
+                        <td class="align-middle">{{product.price_ht}}</td>
+                        <td class="align-middle">{{product.tva}}</td>
+                        <td class="align-middle">{{product.price_ttc}}</td>
+                        <td class="align-middle">{{product.menu_number ? product.menu_number : "-"}}</td>
+                        <td class="align-middle">{{product.is_vegetarian == 0 ? "non" : "oui"}}</td>
+                        <td class="align-middle">{{product.is_orderable == 0 ? "non" : "oui"}}</td>
+                        
+                        <td class="align-middle">
+                            <a href="admin-carte?edit={{product.id}}">
+                                <img class="edit_icon_a" src="public/img/edit.png" alt="icone bouton de modification">
+                            </a>
+                        </td>
+
+                        <td class="align-middle">
+                            <form action="admin-carte?delete={{product.id}}" method="POST" class="form_delete{{suffix_val}}">
+                                {{ form.token }}
+                                {{ form.button_img_delete({suffix: suffix_val, this_element: 'ce produit : "' ~ product.name ~ '"'}) }}
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% elseif products is not iterable %}
+                <tr class="align-middle">
+                    <td class="align-middle" colspan="11" style="font-size: 120%; color: #8c051e;">{{products}}</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+
+{% endblock %}

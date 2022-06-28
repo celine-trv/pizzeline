@@ -1,0 +1,59 @@
+{% extends "base.html.twig" %}
+{% import "form_macro.html.twig" as form %}
+{% set suffix_val = "_regist" %}
+
+{% block title %}
+    Inscription
+{% endblock %}
+
+{% block main %}
+    <h2>Inscription</h2>
+
+    {# DIV MSG : if success, msg_regist will not be an array ; if error, message will be in an array (also used to persist/empty inputs values) #}
+    {% if msg_regist and msg_regist is not iterable %}
+        <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill m-2 cursor_wait" id="msg{{suffix_val}}">{{msg_regist}}</div></div>
+    {% elseif msg_regist and msg_regist is iterable %}
+        <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill m-2" id="msg{{suffix_val}}">{{msg_regist.error}}</div></div>
+    {% endif %}
+    
+    {# FORM #}
+    <form action="" method="POST" class="needs-validation col-xl-8 col-lg-10 p-0 mx-auto my-3 mt-4" novalidate>
+        {{ form.token }}
+
+        <div class="row col-md-10 m-auto">
+            {{ form.input({name: "first_name", label: "votre prénom", value: msg_regist and msg_regist is not iterable ? "" : post.first_name, type: "text", error_text: msg_regist.first_name}, {class: "col-sm-6", suffix: suffix_val, placeholder:"Prénom"}, "required") }}
+            
+            {{ form.input({name: "last_name", label: "votre nom", value: msg_regist and msg_regist is not iterable ? "" : post.last_name, type: "text", error_text: msg_regist.last_name}, {class: "col-sm-6", suffix: suffix_val, placeholder:"Nom"}, "required") }}
+        </div>
+
+        <div class="row col-md-10 m-auto">
+            {{ form.input({name: "email", label: "votre email", value: msg_regist and msg_regist is not iterable ? "" : post.action == "registration" ? post.email : "", type: "email", error_text: msg_regist.email}, {class: "col-sm-6", suffix: suffix_val, placeholder:"Email"}, "required") }}
+
+            {{ form.input({name: "phone", label: "votre téléphone", value: msg_regist and msg_regist is not iterable ? "" : post.phone, type: "text", error_text: msg_regist.phone}, {class: "col-sm-6", suffix: suffix_val, placeholder:"Numéro à 10 chiffres"}, "required") }}
+        </div>
+
+        <div class="row col-md-10 m-auto">
+            {{ form.input({name: "password", label: "votre mot de passe", value: "", type: "password", error_text: msg_regist.password}, {class: "col-sm-6", suffix: suffix_val, placeholder:"8 à 20 caractères"}, "required") }}
+            
+            {{ form.input({name: "conf_password", label: "confirmez mot de passe", value: "", type: "password", error_text: msg_regist.conf_password}, {class: "col-sm-6", suffix: suffix_val, placeholder:"8 à 20 caractères"}, "required") }}
+        </div>
+
+        <div class="row col-md-10 m-auto">
+            {{ form.input({name: "address", label: "votre adresse", value: msg_regist and msg_regist is not iterable ? "" : post.address, type: "text", error_text: msg_regist.address}, {class: "col-sm-12", suffix: suffix_val, placeholder:"Adresse"}, "required") }}
+        </div>
+            
+        <div class="row col-md-10 m-auto">
+            {{ form.input({name: "zipcode", label: "votre code postal", value: msg_regist and msg_regist is not iterable ? "" : post.zipcode, type: "number", error_text: msg_regist.zipcode}, {class: "col-sm-4", suffix: suffix_val, placeholder:"Code postal"}, "required") }}
+
+            {{ form.input({name: "town", label: "votre ville", value: msg_regist and msg_regist is not iterable ? "" : post.town, type: "text", error_text: msg_regist.town}, {class: "col-sm-8", suffix: suffix_val, placeholder:"Ville"}, "required") }}
+        </div>
+
+        <div class="col-md-10 mx-auto my-2 div_small">
+            <span>*</span><small>Tous les champs sont obligatoires</small>
+        </div>
+
+        <div class="row col-md-10 justify-content-center align-items-center mx-auto">
+            {{ form.button_save({suffix: suffix_val, name: "action", value: "registration"}) }}
+        </div>
+    </form>
+{% endblock %}

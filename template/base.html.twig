@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Celine Trv">
+        <meta name="keywords" content="Pizzeline, restaurant, ristorante, restauration rapide, italien, italiano, pizza, pizzas, pâtes, pasta, pastas, manger, repas, déjeuner, dîner, menu, carte, plat, entrées, desserts, commande, commandes, commander, réservation, réservations, réserver, dégustation, fait-maison, home-made">
+        <meta name="description" content="Bienvenue chez PIZZELINE, le restaurant vous invite à un voyage en Italie avec ses pizzas et pastas de la casa. Venez déguster nos spécialités 100% faites maison et passez un moment gourmand. Commandes et réservations en ligne 7/7 et 24/24">
+    
+        {# <!-- Open Graph meta pour Facebook --> #}
+        <meta property="og:title" content="Pizzeline | Restaurant italien" />
+        <meta property="og:url" content="https://{{ml_url}}/" />
+        <meta property="author" content="Celine" />
+        <meta property="og:image" content="https://{{ml_url}}/public/img/share_reseaux.png" />
+        <meta property="og:description" content="Bienvenue chez PIZZELINE, le restaurant vous invite à un voyage en Italie avec ses pizzas, pastas et autres spécialités de la casa faites maison. Commandes et réservations en ligne 7/7 et 24/24" />
+        <meta property="og:site_name" content="pizzeline.epizy.com" />
+        <meta property="og:type" content="website" />   {# <!-- OR article, book, profile, music.xxxx, video.xxxx : https://ogp.me/#types --> #}
+
+        {# <!-- Card meta pour Twitter --> #}
+        <meta name="twitter:card" content="summary_large_image" />
+        {# <!-- <meta name="twitter:site" content="@nomtwitter"> --> #}
+        {# <!-- <meta name="twitter:creator" content="@nomtwitter" /> --> #}
+        <meta name="twitter:title" content="Pizzeline | Restaurant italien" />
+        <meta name="twitter:description" content="Bienvenue chez PIZZELINE, le restaurant vous invite à un voyage en Italie avec ses pizzas, pastas et autres spécialités de la casa faites maison. Commandes et réservations en ligne 7/7 et 24/24" />
+        <meta name="twitter:image:src" content="https://{{ml_url}}/public/img/share_reseaux.png" />
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="public/bootstrap-4.6.0/css/bootstrap.min.css">
+            <link rel="stylesheet" href="public/css/popup_cookies.min.css">
+            <link rel="stylesheet" href="public/css/style.css">
+        {% endblock %}
+        <link rel="icon" type="image/png" href="public/img/favicon.png"/>
+        <title>{% block title %}Pizzeline | Restaurant italien{% endblock %}</title>
+    {% endblock %}
+</head>
+
+<body>
+    {% block body %}
+        <div class="container-fluid">
+            <header>
+                {% block header %}
+                    {# NAVBAR #}
+                    <nav class="navbar navbar-expand-lg bg-red">
+                        <a class="navbar-brand d-flex align-items-center p-0 ml-2" href="{{home}}">
+                            <img id="icon_pizzeline" src="public/img/logo.png" class="d-inline-block align-top mr-1" alt="logo restaurant italien pizzeline">
+                            <h1 class="pizzeline">Pizzeline</h1>
+                        </a>
+                        
+                        {# BURGER #}
+                        <button type="button" class="navbar-toggler d-lg-none p-2 mr-2" id="burger" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <div class="burger_line cross_off"></div>
+                            <div class="burger_line cross_line" id="cross_line1"></div>
+                            <div class="burger_line cross_line" id="cross_line2"></div>
+                            <div class="burger_line cross_off"></div>
+                            <div class="burger_line cross_off"></div>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarContent">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item d-flex align-items-center ml-2 ml-sm-3">
+                                    <div class="icon_content d-flex align-items-center justify-content-center">
+                                        <img id="icon_fork_knife" src="public/img/restaurant-symbol.png" alt="icone fourchette et couteau">
+                                    </div>
+                                    <a class="nav-link beige" href="carte">La Carte</a>
+                                </li>
+                                <li class="nav-item d-flex align-items-center position-relative ml-2 ml-sm-3" id="li_order">
+                                    <div class="icon_content d-flex align-items-center justify-content-center">
+                                        <img id="icon_bag" src="public/img/bag.png" alt="icone sac de commande">
+                                    </div>
+                                    <a class="nav-link beige" href="commande">Commande</a>
+                                    {% if session.current_order and session.current_order|length > 0 %}
+                                        {% set total_qty = 0 %}
+                                        {% for product in session.current_order %}
+                                            {% set total_qty = total_qty + product.quantity %}
+                                        {% endfor %}
+                                        <small class="badge-pill counter_order">{{total_qty}}</small>
+                                    {% endif %}
+                                </li>
+                                <li class="nav-item d-flex align-items-center ml-2 ml-sm-3">
+                                    <div class="icon_content d-flex align-items-center justify-content-center">
+                                        <img id="icon_booking" src="public/img/table_icon.png" alt="icone réservation table">
+                                    </div>
+                                    <a class="nav-link beige" href="reservation">Réservation</a>
+                                </li>
+                                <li class="nav-item d-flex align-items-center ml-2 ml-sm-3">
+                                    <div class="icon_content d-flex align-items-center justify-content-center">
+                                        <img id="icon_info" src="public/img/info_icon.png" alt="icone information">
+                                    </div>
+                                    <a class="nav-link beige" href="infos">Infos</a>
+                                </li>
+                            </ul>
+
+                            <div class="nav-item d-inline ml-2 ml-sm-3 d-flex align-items-center">
+                                <div class="icon_content d-flex align-items-center justify-content-center">
+                                    <img id="icon_user" src="public/img/user.png" alt="icone compte utilisateur">
+                                </div>
+
+                                {# NAV ADMIN #}
+                                {% if session.user.status == "admin" %}
+                                    <div class="nav-item dropdown">
+                                        <a class="nav-link beige dropdown-toggle" href="#" id="navbarDropdown_admin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Bonjour {{session.user.first_name}}
+                                        </a>
+                                        <div class="dropdown-menu dropdown_right" aria-labelledby="navbarDropdown">
+                                            <a class="dropdown-item" href="mon-compte">Mon compte</a>
+                                            <a class="dropdown-item" href="commande">Mes commandes</a>
+                                            <a class="dropdown-item" href="reservation">Mes réservations</a>
+                                            <a class="dropdown-item" href="fidelite">Mes avantages fidélité</a>
+                                            {# <a class="dropdown-item" href="#">Enregistrer une commande client</a> #}
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="admin-commandes">Gestion commandes</a>
+                                            <a class="dropdown-item" href="admin-reservations">Gestion réservations</a>
+                                            <a class="dropdown-item" href="admin-carte">Gestion carte / menu</a> 
+                                            <a class="dropdown-item" href="admin-utilisateurs">Gestion utilisateurs</a>
+                                            <a class="dropdown-item" href="admin-avis">Gestion avis</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="deconnexion">Déconnexion</a>
+                                        </div>
+                                    </div>
+
+                                {# NAV USER #}
+                                {% elseif session.user.status == "utilisateur" %}
+                                    <div class="nav-item dropdown">
+                                        <a class="nav-link beige dropdown-toggle" href="#" id="navbarDropdown_user" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Bonjour {{session.user.first_name}}
+                                        </a>
+                                        <div class="dropdown-menu dropdown_right" aria-labelledby="navbarDropdown">
+                                            <a class="dropdown-item" href="mon-compte">Mon compte</a>
+                                            <a class="dropdown-item" href="commande">Mes commandes</a>
+                                            <a class="dropdown-item" href="reservation">Mes réservations</a>
+                                            <a class="dropdown-item" href="fidelite">Mes avantages fidélité</a>
+                                            <a class="dropdown-item" href="avis-clients">Laisser un avis</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="deconnexion">Déconnexion</a>
+                                        </div>
+                                    </div>
+
+                                {# NAV UNLOGGED #}
+                                {% else %}
+                                    <a class="nav-link beige" id="loginModal_a" href="" data-toggle="modal" data-target="#loginModal">Connexion</a>
+                                    {# MODAL LOGIN #}
+                                    {% include "security/login.html.twig" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </nav>
+                {% endblock %}
+            </header>
+
+            {# MAIN #}
+            <main>
+                {% block main %}{% endblock %}
+
+                {# MODAL ALERT #}
+                <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header border-bottom-0 pb-0">
+                                <h3 class="modal-title text-center">Erreur</h3>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                    {# <span aria-hidden="true">&times;</span> #}
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                {# <p class="text-center p-3">La session a expiré <br> Veuillez actualiser la page et réessayer</p> #}
+                                <p class="text-center p-3">Délai expiré, la page doit être rechargée</p>
+                            </div>
+                            
+                            <div class="modal-footer justify-content-center pt-0">
+                                <button type="button" class="button btn" onclick="window.location.href=''">Actualiser</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {# FOOTER #}
+            <footer class = "bg-red d-flex flex-column align-items-center mt-auto">
+                {% block footer %}
+                    <div>
+                        <nav>
+                            <a href="contact" class="beige">Contact</a>
+                            <span class="separate beige"> | </span>
+                            <a class="beige" id="modal_ML" href="" data-toggle="modal" data-target="#mlModal">Mentions légales</a>
+                            {# <span class="separate beige"> | </span>
+                            <a href="plan-site" class="beige">Plan du site</a> #}
+                        </nav>
+
+                        {# MODAL ML #}
+                        <div class="modal fade" id="mlModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header border-bottom-0">
+                                        <h3 class="modal-title text-center" id="staticBackdropLabel">Mentions légales</h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                            {# <span aria-hidden="true">&times;</span> #}
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% set ml_email = "contact@celine-dev-web.com" %}
+                                        {% set ml_url = "www.pizzeline.celine-dev-web.com" %}
+
+                                        <h4>1. Présentation du site.</h4>
+                                        <p>En vertu de l'article 6 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, il est précisé aux utilisateurs du site <a href="//{{ml_url}}/">{{ml_url}}</a> l'identité des différents intervenants dans le cadre de sa réalisation et de son suivi :</p>
+                                        <p><strong>Propriétaire</strong> : Céline Trivier – Yvelines<br />
+                                        <strong>Créateur</strong> : <a target="blank" href="www.celine-dev-web.fr">Céline Trivier</a><br />
+                                        <strong>Responsable publication</strong> : le webmaster – <a href="mailto:{{ml_email}}" target="blank">{{ml_email}}</a><br />
+                                        Le responsable publication est une personne physique ou une personne morale.<br />
+                                        <strong>Webmaster</strong> : le webmaster – <a href="mailto:{{ml_email}}" target="blank">{{ml_email}}</a><br />
+                                        <strong>Hébergeur</strong> : Infinity Free – https://infinityfree.net<br />
+                                        Crédits : Le modèle de mentions légales est offert par <a target="blank" href="https://www.subdelirium.com/">Subdelirium.com</a></p>
+
+                                        <h4>2. Conditions générales d’utilisation du site et des services proposés.</h4>
+                                        <p>L’utilisation du site <a href="//{{ml_url}}/">{{ml_url}}</a> implique l’acceptation pleine et entière des conditions générales d’utilisation ci-après décrites. Ces conditions d’utilisation sont susceptibles d’être modifiées ou complétées à tout moment, les utilisateurs du site <a href="//{{ml_url}}/">{{ml_url}}</a> sont donc invités à les consulter de manière régulière.</p>
+                                        <p>Ce site est normalement accessible à tout moment aux utilisateurs. Une interruption pour raison de maintenance technique peut être toutefois décidée par Céline Trivier, qui s’efforcera alors de communiquer préalablement aux utilisateurs les dates et heures de l’intervention.</p>
+                                        <p>Le site <a href="//{{ml_url}}/">{{ml_url}}</a> est mis à jour régulièrement par le webmaster. De la même façon, les mentions légales peuvent être modifiées à tout moment : elles s’imposent néanmoins à l’utilisateur qui est invité à s’y référer le plus souvent possible afin d’en prendre connaissance.</p>
+                                        <h4>3. Description des services fournis.</h4>
+                                        <p>Le site <a href="//{{ml_url}}/">{{ml_url}}</a> a pour objet de fournir une information concernant l’ensemble des activités de la société.</p>
+                                        <p>Céline Trivier s’efforce de fournir sur le site <a href="//{{ml_url}}/">{{ml_url}}</a> des informations aussi précises que possible. Toutefois, il ne pourra être tenue responsable des omissions, des inexactitudes et des carences dans la mise à jour, qu’elles soient de son fait ou du fait des tiers partenaires qui lui fournissent ces informations.</p>
+                                        <p>Tous les informations indiquées sur le site <a href="//{{ml_url}}/">{{ml_url}}</a> sont données à titre indicatif, et sont susceptibles d’évoluer. Par ailleurs, les renseignements figurant sur le site <a href="//{{ml_url}}/">{{ml_url}}</a> ne sont pas exhaustifs. Ils sont donnés sous réserve de modifications ayant été apportées depuis leur mise en ligne.</p>
+                                        <h4>4. Limitations contractuelles sur les données techniques.</h4>
+                                        <p>Le site utilise la technologie JavaScript.</p>
+                                        <p>Le site Internet ne pourra être tenu responsable de dommages matériels liés à l’utilisation du site. De plus, l’utilisateur du site s’engage à accéder au site en utilisant un matériel récent, ne contenant pas de virus et avec un navigateur de dernière génération mis-à-jour</p>
+                                        <h4>5. Propriété intellectuelle et contrefaçons.</h4>
+                                        <p>Céline Trivier est propriétaire des droits de propriété intellectuelle ou détient les droits d’usage sur tous les éléments accessibles sur le site, notamment les textes, images, graphismes, logo, icônes, sons, logiciels.</p>
+                                        <p>Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable de : Céline Trivier.</p>
+                                        <p>Toute exploitation non autorisée du site ou de l’un quelconque des éléments qu’il contient sera considérée comme constitutive d’une contrefaçon et poursuivie conformément aux dispositions des articles L.335-2 et suivants du Code de Propriété Intellectuelle.</p>
+                                        <h4>6. Limitations de responsabilité.</h4>
+                                        <p>Céline Trivier ne pourra être tenue responsable des dommages directs et indirects causés au matériel de l’utilisateur, lors de l’accès au site {{ml_url}}, et résultant soit de l’utilisation d’un matériel ne répondant pas aux spécifications indiquées au point 4, soit de l’apparition d’un bug ou d’une incompatibilité.</p>
+                                        <p>Céline Trivier ne pourra également être tenue responsable des dommages indirects (tels par exemple qu’une perte de marché ou perte d’une chance) consécutifs à l’utilisation du site <a href="//{{ml_url}}/">{{ml_url}}</a>.</p>
+                                        <p>Des espaces interactifs (possibilité de poser des questions dans l’espace contact) sont à la disposition des utilisateurs. Céline Trivier se réserve le droit de supprimer, sans mise en demeure préalable, tout contenu déposé dans cet espace qui contreviendrait à la législation applicable en France, en particulier aux dispositions relatives à la protection des données. Le cas échéant, Céline Trivier se réserve également la possibilité de mettre en cause la responsabilité civile et/ou pénale de l’utilisateur, notamment en cas de message à caractère raciste, injurieux, diffamant, ou pornographique, quel que soit le support utilisé (texte, photographie…).</p>
+                                        <h4>7. Gestion des données personnelles.</h4>
+                                        <p>En France, les données personnelles sont notamment protégées par la loi n° 78-87 du 6 janvier 1978, la loi n° 2004-801 du 6 août 2004, l'article L. 226-13 du Code pénal et la Directive Européenne du 24 octobre 1995.</p>
+                                        <p>A l'occasion de l'utilisation du site <a href="//{{ml_url}}/">{{ml_url}}</a>, peuvent êtres recueillies : l'URL des liens par l'intermédiaire desquels l'utilisateur a accédé au site <a href="//{{ml_url}}/">{{ml_url}}</a>, le fournisseur d'accès de l'utilisateur, l'adresse de protocole Internet (IP) de l'utilisateur.</p>
+                                        <p> En tout état de cause Céline Trivier ne collecte des informations personnelles relatives à l'utilisateur que pour le besoin de certains services proposés par le site <a href="//{{ml_url}}/">{{ml_url}}</a>. L'utilisateur fournit ces informations en toute connaissance de cause, notamment lorsqu'il procède par lui-même à leur saisie. Il est alors précisé à l'utilisateur du site <a href="//{{ml_url}}/">{{ml_url}}</a> l’obligation ou non de fournir ces informations.</p>
+                                        <p>Conformément aux dispositions des articles 38 et suivants de la loi 78-17 du 6 janvier 1978 relative à l’informatique, aux fichiers et aux libertés, tout utilisateur dispose d’un droit d’accès, de rectification et d’opposition aux données personnelles le concernant, en effectuant sa demande écrite et signée, accompagnée d’une copie du titre d’identité avec signature du titulaire de la pièce, en précisant l’adresse à laquelle la réponse doit être envoyée.</p>
+                                        <p>Aucune information personnelle de l'utilisateur du site <a href="//{{ml_url}}/">{{ml_url}}</a> n'est publiée à l'insu de l'utilisateur, échangée, transférée, cédée ou vendue sur un support quelconque à des tiers. Seule l'hypothèse du rachat de Céline Trivier et de ses droits permettrait la transmission des dites informations à l'éventuel acquéreur qui serait à son tour tenu de la même obligation de conservation et de modification des données vis à vis de l'utilisateur du site <a href="//{{ml_url}}/">{{ml_url}}</a>.</p>
+                                        <p>Les bases de données sont protégées par les dispositions de la loi du 1er juillet 1998 transposant la directive 96/9 du 11 mars 1996 relative à la protection juridique des bases de données.</p>
+                                        <h4>8. Liens hypertextes et cookies.</h4>
+                                        <p>Le site <a href="//{{ml_url}}/">{{ml_url}}</a> contient un certain nombre de liens hypertextes vers d’autres sites, mis en place avec l’autorisation de Céline Trivier. Cependant, Céline Trivier n’a pas la possibilité de vérifier le contenu des sites ainsi visités, et n’assumera en conséquence aucune responsabilité de ce fait.</p>
+                                        <p>La navigation sur le site <a href="//{{ml_url}}/">{{ml_url}}</a> est susceptible de provoquer l’installation de cookie(s) sur l’ordinateur de l’utilisateur. Un cookie est un fichier de petite taille, qui ne permet pas l’identification de l’utilisateur, mais qui enregistre des informations relatives à la navigation d’un ordinateur sur un site. Les données ainsi obtenues visent à faciliter la navigation ultérieure sur le site, et ont également vocation à permettre diverses mesures de fréquentation.</p>
+                                        <p>Le refus d’installation d’un cookie peut entraîner l’impossibilité d’accéder à certains services. L’utilisateur peut toutefois configurer son ordinateur de la manière suivante, pour refuser l’installation des cookies :</p>
+                                        <p>Sous Internet Explorer : onglet outil (pictogramme en forme de rouage en haut a droite) / options internet. Cliquez sur Confidentialité et choisissez Bloquer tous les cookies. Validez sur Ok.</p>
+                                        <p>Sous Firefox : en haut de la fenêtre du navigateur, cliquez sur le bouton Firefox, puis aller dans l'onglet Options. Cliquer sur l'onglet Vie privée.
+                                        Paramétrez les Règles de conservation sur :  utiliser les paramètres personnalisés pour l'historique. Enfin décochez-la pour  désactiver les cookies.</p>
+                                        <p>Sous Safari : Cliquez en haut à droite du navigateur sur le pictogramme de menu (symbolisé par un rouage). Sélectionnez Paramètres. Cliquez sur Afficher les paramètres avancés. Dans la section "Confidentialité", cliquez sur Paramètres de contenu. Dans la section "Cookies", vous pouvez bloquer les cookies.</p>
+                                        <p>Sous Chrome : Cliquez en haut à droite du navigateur sur le pictogramme de menu (symbolisé par trois lignes horizontales). Sélectionnez Paramètres. Cliquez sur Afficher les paramètres avancés. Dans la section "Confidentialité", cliquez sur préférences.  Dans l'onglet "Confidentialité", vous pouvez bloquer les cookies.</p>
+
+                                        <h4>9. Droit applicable et attribution de juridiction.</h4>
+                                        <p>Tout litige en relation avec l’utilisation du site <a href="//{{ml_url}}/">{{ml_url}}</a> est soumis au droit français. Il est fait attribution exclusive de juridiction aux tribunaux compétents de Paris.</p>
+                                        <h4>10. Les principales lois concernées.</h4>
+                                        <p>Loi n° 78-17 du 6 janvier 1978, notamment modifiée par la loi n° 2004-801 du 6 août 2004 relative à l'informatique, aux fichiers et aux libertés.</p>
+                                        <p> Loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique.</p>
+                                        <h4>11. Lexique.</h4>
+                                        <p>Utilisateur : Internaute se connectant, utilisant le site susnommé.</p>
+                                        <p>Informations personnelles : « les informations qui permettent, sous quelque forme que ce soit, directement ou non, l'identification des personnes physiques auxquelles elles s'appliquent » (article 4 de la loi n° 78-17 du 6 janvier 1978).</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="https://fr-fr.facebook.com" target="_blank" title="Retrouvez-nous sur Facebook">
+                            <img class="icon_soc_med" src="public/img/facebook_2.png" alt="Retrouvez-nous sur Facebook">
+                        </a>
+                        <a href="https://twitter.com" target="_blank" title="Retrouvez-nous sur Twitter">
+                            <img class="icon_soc_med" src="public/img/twitter_2.png" alt="Retrouvez-nous sur Twitter">
+                        </a>
+                        <a href="https://fr.linkedin.com" target="_blank" title="Retrouvez-nous sur LinkedIn">
+                            <img class="icon_soc_med" src="public/img/linkedin_2.png" alt="Retrouvez-nous sur LinkedIn">
+                        </a>
+                    </div>
+                    <small class="beige text-center">&copy; {{ "now"|date("Y") }}, Mijoté avec appétit par Céline Trivier - Tous droits réservés</small>
+                {% endblock %}
+            </footer>
+        </div>
+
+        {# JS #}
+        <script src="public/js/jquery-3.5.1.min.js"></script>
+        <script src="public/bootstrap-4.6.0/js/bootstrap.bundle.min.js"></script>
+        <script src="public/js/popup_cookies.js"></script>
+        <script src="public/js/script.js"></script>
+        
+        {% if not session.user.id and must_login %}
+            <script> $('#loginModal').modal('show'); </script>
+        {% endif %}
+
+        {% if error_csrf %}
+            <script> $('#alertModal').modal('show'); </script>
+        {% endif %}
+
+        {% if get.ml is defined %}
+            <script> $('#mlModal').modal('show'); </script>
+        {% endif %}
+
+        {% block javascript %}{% endblock %}
+    {% endblock body %}
+</body>
+</html>

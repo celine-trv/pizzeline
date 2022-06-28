@@ -1,0 +1,50 @@
+{% extends "base.html.twig" %}
+{% import "form_macro.html.twig" as form %}
+{% set suffix_val = "_account" %}
+
+{% block title %}
+    Mon compte
+{% endblock %}
+
+{% block main %}
+    <h2>Mon compte</h2>
+
+    {# DIV MSG #}
+    <div class="d-flex justify-content-center align-items-center"><div class="badge badge-pill m-2" id="msg{{suffix_val}}">{{msg_account.error}}</div></div>
+
+    {# FORM : path create here to submit form by Ajax (json) and in order to check GET edit = id user #}
+    <form action="mon-compte?edit={{session.user.id}}" method="POST" class="needs-validation col-xl-5 col-lg-6 col-md-8 col-sm-11 p-0 mx-auto mb-2" id="form{{suffix_val}}" novalidate>
+        {{ form.token }}
+
+        {{ form.input({name: "first_name", label: "prénom : ", value: post.first_name ? post.first_name : session.user.first_name, type: "text", error_text: msg_account.first_name}, {class: "row justify-content-between", class_label: "col-sm-3 col-form-label", class_input: "form-control-plaintext", suffix: suffix_val}, "required", "readonly") }}
+        
+        {{ form.input({name: "last_name", label: "nom : ", value: post.last_name ? post.last_name : session.user.last_name, type: "text", error_text: msg_account.last_name}, {class: "row justify-content-between", class_label: "col-sm-3 col-form-label", class_input: "form-control-plaintext", suffix: suffix_val}, "required", "readonly") }}
+        
+        {{ form.input({name: "email", label: "email : ", value: post.email ? post.email : session.user.email, type: "email", error_text: msg_account.email}, {class: "row justify-content-between", class_label: "col-sm-3 col-form-label", class_input: "form-control-plaintext", suffix: suffix_val}, "required", "readonly") }}
+
+        {{ form.input({name: "phone", label: "téléphone : ", value: post.phone ? post.phone : display_session_phone, type: "text", error_text: msg_account.phone}, {class: "row justify-content-between", class_label: "col-sm-3 col-form-label", class_input: "form-control-plaintext", suffix: suffix_val}, "required", "readonly") }}
+        
+        {{ form.input({name: "address", label: "adresse : ", value: post.address ? post.address : session.user.address, type: "text", error_text: msg_account.address}, {class: "row justify-content-between", class_label: "col-sm-3 col-form-label", class_input: "form-control-plaintext", suffix: suffix_val}, "required", "readonly") }}
+        
+        {{ form.input({name: "zipcode", label: "code postal : ", value: post.zipcode ? post.zipcode : session.user.zipcode, type: "number", error_text: msg_account.zipcode}, {class: "row justify-content-between", class_label: "col-sm-3 col-form-label", class_input: "form-control-plaintext", suffix: suffix_val}, "required", "readonly") }}
+
+        {{ form.input({name: "town", label: "ville : ", value: post.town ? post.town : session.user.town, type: "text", error_text: msg_account.town}, {class: "row justify-content-between", class_label: "col-sm-3 col-form-label", class_input: "form-control-plaintext", suffix: suffix_val}, "required", "readonly") }}
+
+        <div class="row mx-auto my-2 mb-3 div_small">
+            {# <small><a href="mot-de-passe" class="a_text">Modifier</a> le mot de passe</small> #}
+            <small>Pour modifier le mot de passe <a class="a_text" href="" data-toggle="modal" data-target="#passwordModal">c'est ici</a></small>
+        </div>
+
+        <div class="row col-md-10 justify-content-center align-items-center mx-auto" id="row_btn_edit{{suffix_val}}">
+            <button type="button" class="button btn" id="btn_edit{{suffix_val}}">Modifier</button>
+        </div>
+
+        <div class="row col-md-10 justify-content-center align-items-center mx-auto" id="row_btn_reset{{suffix_val}}">
+            {{ form.button_reset({suffix: suffix_val}) }}
+            {{ form.button_save({suffix: suffix_val}) }}
+        </div>
+    </form>
+    
+    {# Modal password #}
+    {% include "security/password.html.twig" %}
+{% endblock %}

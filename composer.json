@@ -1,0 +1,12 @@
+{
+    "name": "pizzeline/twig",
+    "authors": [
+        {
+            "name": "Celine",
+            "email": "titiceline78@hotmail.fr"
+        }
+    ],
+    "require": {
+        "twig/twig": "^3.0"
+    }
+}

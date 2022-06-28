@@ -1,0 +1,28 @@
+php_value display_errors Off
+php_value mbstring.http_input auto
+php_value date.timezone Europe/Paris
+
+
+RewriteEngine on
+# RewriteBase /
+
+# This checks to make sure the connection is not already HTTPS
+RewriteCond %{HTTPS} !=on
+# This rule will redirect all users who are using any part of / to the same location but using HTTPS.
+# RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R,L]       # this is better when sub-directories...
+
+# No directory listing
+Options -Indexes
+# and redirect to home page of website
+ErrorDocument 403 https://%{SERVER_NAME}
+
+# To change URL without GET ?page=
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?page=$1 [QSA]      # or [NC,L] or [L] 
+
+# RewriteCond %{QUERY_STRING} !page=(.*)
+# RewriteRule ^(.*)$ index.php?page=$1&action=$2 [QSA]
+# RewriteRule ^(.*)$ &action=$1 [QSA]             # or [NC,L] or [L]    #TEST
+

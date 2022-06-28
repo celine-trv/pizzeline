@@ -1,0 +1,86 @@
+{% extends "base.html.twig" %}
+{% set suffix_val = "_infos" %}
+
+{% block title %}
+    Informations
+{% endblock %}
+
+{% block main %}
+    <h2>Informations</h2>
+    
+    {# BLOCK_TABS #}
+    <section class="block_tabs" id="block_tabs{{suffix_val}}">
+        <ul class="nav nav-tabs mb-3" id="tabs{{suffix_val}}" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="tab-contacter" data-toggle="tab" href="#contacter" role="tab" aria-controls="contacter" aria-selected="true">Nous contacter</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-acces" data-toggle="tab" href="#acces" role="tab" aria-controls="acces" aria-selected="false">Accès</a>
+            </li>
+        </ul>
+
+        <div class="tab-content px-2" id="tab_content{{suffix_val}}">
+            {# 1st TAB : CONTACTER #}
+            <div class="tab-pane fade show active" id="contacter" role="tabpanel" aria-labelledby="tab-contacter">
+                <div class="contacter d-flex justify-content-around align-items-center">
+                    <img class="restau_pict" id="restau_pict_contacter{{suffix_val}}" src="public/img/Restau_IMG_20210702_175607.jpg" alt="façade restaurant italien Pizzeline">
+
+                    <div class="d-flex flex-column">
+                        <article>
+                            <div class="d-flex flex-wrap justify-content-between mb-3" id="address{{suffix_val}}">
+                                <p class="mr-3"><strong>Pizzeline</strong><br>1 Rue de la Dégustation<br>78000 Yvelines</p>
+                                <div class="d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img class="mr-2" id="phone_icon{{suffix_val}}" src="public/img/call.png" alt="icone téléphone">
+                                        <a href="tel:0123456789" id="tel{{suffix_val}}">01 23 45 67 89</a>
+                                    </div>
+                                    <div class="mt-2 d-flex align-items-center">
+                                        <img class="mr-2" id="mail_icon{{suffix_val}}" src="public/img/arobase.png" alt="icone mail arobase">
+                                        <a class="a_text" href="contact" id="mail{{suffix_val}}">mail</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="my-3 d-flex align-items-center">
+                                <img class="mr-2 d-none d-sm-block" id="plate_icon{{suffix_val}}" src="public/img/platetime_icon.png" alt="icone assiette">
+                                <p>Ouvert du lundi au samedi, le dimanche à emporter<br>Service 12h - 14h et 19h - 21h</p>
+                            </div>
+
+                            <p class="mt-3">Commandes et réservations 7/7 - 24/24</p>
+                        </article>
+
+                        {# <div class="btn{{suffix_val}}">
+                            <button class="button" onclick="window.location.href='contact'">Envoyer un message</button>
+                        </div> #}
+                    </div>
+                </div>
+            </div>
+
+            {# 2nd TAB : ACCES #}
+            <div class="tab-pane fade" id="acces" role="tabpanel" aria-labelledby="tab-acces">
+                <div class="acces d-flex justify-content-around align-items-center">
+                    <iframe class="iframe_map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d299855.87281234376!2d1.6154523583793041!3d48.772220473461154!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e69c3cff31cfd9%3A0x30b82c3688b2a60!2sYvelines!5e0!3m2!1sfr!2sfr!4v1626777318280!5m2!1sfr!2sfr" allowfullscreen="" loading="lazy"></iframe>
+
+                    <article>
+                        <div class="d-flex align-items-center mb-3">
+                            <img class="mr-2" id="here_map{{suffix_val}}" src="public/img/here_map.png" alt="icone localisation carte">
+                            <p>Trouvez nous facilement :</p>
+                        </div>
+                        
+                        <p class="my-3"><strong>Pizzeline</strong><br>1 Rue de la Dégustation<br>78000 Yvelines</p>
+
+                        <div class="d-flex align-items-center my-3">
+                            <img class="mr-2" id="car{{suffix_val}}" src="public/img/car.png" alt="icone voiture">
+                            <p>Accès par la route, à 5 minutes de la sortie</p>
+                        </div>
+
+                        <div class="d-flex align-items-center mt-3">
+                            <img class="mr-2" id="bus{{suffix_val}}" src="public/img/bus.png" alt="icone bus">
+                            <p>Bus 422, arrêt du coin</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

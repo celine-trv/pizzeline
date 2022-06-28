@@ -1,0 +1,200 @@
+{# TOKEN (hidden) #}
+{% macro token() %}
+    <input type="hidden" name="token" value="{{session.token}}">
+{% endmacro %}
+
+{# INPUT #}
+{% macro input(params = [], options = [], required, readonly) %}
+    <div class="form-group {{options.class}}">
+        {% if params.label is not empty %}
+            <label for="{{params.name}}" {% if options.class_label %} class="{{options.class_label}}" {% endif %}>{{params.label|title}}</label>
+        {% endif %}
+
+        {% if params.type == "password" %}
+            <div class="position-relative">
+        {% endif %}
+
+                <input type="{{params.type}}" name="{{params.name}}" class="form-control {{options.class_input}} {% if params.error_text is not empty %} border_error {% endif %}" id="{{params.name ~ options.suffix}}" minlength="1" maxlength="250" value="{{params.value}}" {% if options.placeholder %} placeholder="{{options.placeholder}}"{% endif %} {{options.data}} {{required}} {{readonly}}>
+
+        {% if params.type == "password" %}
+                <div class="icon_eye"></div>
+            </div>
+        {% endif %}
+
+        {% if params.error_text is not empty %}
+            <small id="error_{{params.name ~ options.suffix}}" class="error_form">{{params.error_text}}</small>
+        {% else %}
+            <div id="error_{{params.name ~ options.suffix}}" class="invalid-feedback">Veuillez saisir {{ params.label|replace({" :": ""}) }}</div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# TEXTAREA #}
+{% macro textarea(params = [], options = [], required, readonly) %}
+    <div class="form-group {{options.class}}">
+        {% if params.label is not empty %}
+            <label for="{{params.name}}" {% if options.class_label %} class="{{options.class_label}}" {% endif %}>{{params.label|title}}</label>
+        {% endif %}
+
+        <textarea name="{{params.name}}" class="form-control {{options.class_input}} {% if params.error_text is not empty %} border_error {% endif %}" id="{{params.name ~ options.suffix}}" rows="{{params.rows}}" minlength="2" maxlength="1500" {% if options.placeholder %} placeholder="{{options.placeholder}}"{% endif %} {{options.data}} {{required}} {{readonly}}>{{params.value}}</textarea>
+
+        {% if params.error_text is not empty %}
+            <small id="error_{{params.name ~ options.suffix}}" class="error_form">{{params.error_text}}</small>
+        {% else %}
+            <div id="error_{{params.name ~ options.suffix}}" class="invalid-feedback">Veuillez saisir {{ params.label|replace({" :": ""}) }}</div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# SELECT #}
+{% macro select(params = [], options = [], required, readonly) %}
+    <div class="form-group {{options.class}}">
+        {% if params.label is not empty %}
+            <label for="{{params.name}}" {% if options.class_label %} class="{{options.class_label}}" {% endif %}>{{params.label|title}}</label>
+        {% endif %}
+
+        <select name="{{params.name}}" class="form-control {{options.class_input}} {% if params.error_text is not empty %} border_error {% endif %}" id="{{params.name ~ options.suffix}}" {{options.data}} {{required}}>
+            {% if not params.selected %} 
+                <option selected disabled value="">{{options.placeholder ? options.placeholder : "Sélectionner..."}}</option>
+            {% endif %}
+            
+            {% if params.values %}
+                {% for value in params.values %}
+                    <option value="{{value}}" {% if params.selected == value %} selected {% endif %}>{{value|title}}</option>
+                {% endfor %}
+            {% elseif params.perso_values %}
+                {% for key, value in params.perso_values %}
+                    <option value="{{key}}" {% if params.selected == key %} selected {% endif %}>{{value|title}}</option>
+                {% endfor %}
+            {% endif %}
+        </select>
+
+        {% if params.error_text is not empty %}
+            <small id="error_{{params.name ~ options.suffix}}" class="error_form">{{params.error_text}}</small>
+        {% elseif get.page|slice(0, 17) != "admin-utilisateur" %}
+            <div id="error_{{params.name ~ options.suffix}}" class="invalid-feedback">Veuillez sélectionner {{ params.label|replace({" :": ""}) }}</div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# RADIO #}
+{% macro radio(params = [], options = [], required, readonly) %} 
+    <div class="form-group {{options.class}}" style="width: max-content;">
+        {# <div class="d-flex flex-column justify-content-between mx-sm-auto" style="width: max-content; height: 100%;"> #}
+            {% if params.label is not empty %}
+                <label {% if options.class_label %} class="{{options.class_label}}" {% endif %} for="{{params.name}}">{{params.label|title}}</label>
+            {% endif %}
+            
+            <div class="form-radio {% if params.error_text is not empty %} border_error {% endif %}">
+                <div class="form-check form-check-inline">
+                    <input type="radio" name={{params.name}} class="form-check-input {{options.class_input}}" id="{{params.name ~ options.suffix}}_true" value=1 {% if params.checked == 1 %} checked {% endif %} {{options.data}} {{required}}>
+                    <label class="form-check-label {{options.class_label}}" for="{{params.name}}_true">oui</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name={{params.name}} class="form-check-input {{options.class_input}}" id="{{params.name ~ options.suffix}}_false" value=0 {% if params.checked == 0 %} checked {% endif %} {{options.data}} {{required}}>
+                    <label class="form-check-label {{options.class_label}}" for="{{params.name}}_false">non</label>
+                </div>
+            </div>
+
+            {% if params.error_text is not empty %}
+                <small id="error_{{params.name ~ options.suffix}}" class="error_form">{{params.error_text}}</small>
+            {% else %}
+                <div id="error_{{params.name ~ options.suffix}}" class="invalid-feedback">{{params.error_text}}</div>
+            {% endif %}
+        {# </div> #}
+    </div>
+{% endmacro %}
+
+{# RANGE #}
+{% macro range_input(params = [], options = [], required, readonly) %} 
+    <div class="form-group {{options.class}}">
+        <label for="{{params.name}}" {% if options.class_label %} class="{{options.class_label}}" {% endif %}>Note (entre 1 et 10)</label>
+        <input type="range" class="form-control-range {{options.class_input}}" id="{{params.name ~ options.suffix}}" name="{{params.name}}" min="0" max="10" step="0.5" value="5" {{options.data}} {{required}}>
+        
+        {% if params.error_text is not empty %}
+            <small id="error_{{params.name ~ options.suffix}}" class="error_form">{{params.error_text}}</small>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+{# BUTTONS #}
+{% macro button_login() %} 
+    <button type="submit" class="button btn" id="btn_login">Connexion</button>       {# name="action" value="login" #}
+{% endmacro %}
+
+{% macro button_send(options = []) %} 
+    <button type="submit" class="button btn" id="btn_send{{options.suffix}}" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %}>Envoyer</button>                                {# name="action" value="send" #}
+{% endmacro %}
+
+{% macro button_add(options = []) %} 
+    <button type="submit" class="button btn" id="btn_add{{options.suffix}}" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %}>Ajouter</button>                                 {# name="action" value="add" #}
+{% endmacro %}
+
+{% macro button_save(options = []) %} 
+    <button type="submit" class="button btn" id="btn_save{{options.suffix}}" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %}>Valider</button>                                {# name="action" value="save" #}
+{% endmacro %}
+
+{% macro button_edit(options = []) %} 
+    <button type="submit" class="button btn" id="btn_edit{{options.suffix}}" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %}>Modifier</button>                               {# name="action" value="edit" #}
+{% endmacro %}
+
+{% macro button_delete(options = []) %} 
+    <button type="submit" class="button btn" id="btn_delete{{options.suffix}}" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %} onclick="return(confirm('Voulez-vous vraiment supprimer {{options.this_element}} ?'))">Supprimer</button>                            {# name="action" value="delete" #}
+{% endmacro %}
+
+{% macro button_reset(options = []) %} 
+    <button type="reset" class="button btn" id="btn_reset{{options.suffix}}" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %}>Annuler</button>                                {# name="action" value="reset" #}
+{% endmacro %}
+
+
+{# BUTTONS IMG #}
+{% macro button_img_save(options = []) %} 
+    <button type="submit" class="btn_img btn_img_save" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %}>
+        <img src="public/img/check.png" alt="icone bouton de validation">
+    </button>                                {# name="action" value="save" #}
+{% endmacro %}
+
+{% macro button_img_edit(options = []) %} 
+    <button type="submit" class="btn_img btn_img_edit" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %}>
+        <img src="public/img/edit.png" alt="icone bouton de modification">
+    </button>                               {# name="action" value="edit" #}
+{% endmacro %}
+
+{% macro button_img_delete(options = []) %} 
+    <button type="submit" class="btn_img btn_img_delete" {% if options.name %} name="{{options.name}}" {% endif %} {% if options.value %} value="{{options.value}}" {% endif %} onclick="return(confirm('Voulez-vous vraiment supprimer {{options.this_element}} ?'))">
+        <img src="public/img/trash.png" alt="icone bouton de suppression">
+    </button>                               {# name="action" value="delete" #}
+{% endmacro %}
+
+
+
+{# EXEMPLE d'utilisation :
+    <form action="contact" method="post" class="needs-validation" novalidate>
+        <div class="row col-md-10 justify-content-center align-items-center">
+            {{ form.input({name: "first_name", label: "votre prénom", value: "", type: "text", error_text: "Veuillez saisir votre prénom"}, {class: "col-md", required:"required", error:true}) }}
+            
+            {{ form.textarea({name: "last_name", label: "votre nom", value: "", error_text: "Veuillez saisir votre nom"}, {class: "col-md", required:"required", error:true}) }}
+        </div>
+
+        <div class="row col-md-10 justify-content-center align-items-center">
+            {{ form.radio({name: "vegetarian", label: "Végétarien ?", checked: check_true, error_text: "Veuillez cocher une réponse"}, {class: "col-md-6", required:"required", error:true}) }}
+
+            {{ form.select({name: "category", label: "Catégorie", values: array_values, selected: "dessert", error_text: "Veuillez sélectionner une réponse"}, {class: "col-md", required:"required", error:true}) }}
+        </div>
+
+        <div class="row col-md-10 justify-content-center align-items-center">
+            {{ form.range_input({name: "custumer_grade", error_text: "Veuillez indiquer une note de 1 à 10"}, {class: "col-5", required:"required", error:true}) }}
+            <span class="col-1 text-right" id="span_grade"> {% if grade_bdd %} {{grade_bdd}} {% else %} onchange(Value of $_POST["custumer_grade"]){% endif %} </span>     
+                    if(#span_grade textContent.trim() === "") $error;
+        </div>
+
+        <div class="row col-md-10 justify-content-center align-items-center">
+            {{ form.button_save_new() }}
+        </div>
+
+        <div class="row col-md-10 justify-content-center align-items-center">
+            {{ form.button_save() }}
+        </div>
+    </form>
+ #}

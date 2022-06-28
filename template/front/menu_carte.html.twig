@@ -1,0 +1,142 @@
+{% extends "base.html.twig" %}
+{% import "form_macro.html.twig" as form %}
+{% set suffix_val = "_menu" %}
+
+{% block title %}
+    Carte et Menus
+{% endblock %}
+
+{% block main %}
+    <h2 class="m-0">Carte et Menus</h2>
+    <div class="div_small text-center mb-h2">
+        <a class="a_text font-italic" href="Pizzeline_LaCarte.pdf">télécharger la carte</a>
+    </div>
+    
+    {# BLOCK_TABS #}
+    <section class="block_tabs" id="block_tabs{{suffix_val}}">
+        <ul class="nav nav-tabs mb-3" id="tabs{{suffix_val}}" role="tablist">
+            {# TABS (CATEGORIES IN LOOP) #}
+            {% for key, category in enum_category %}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link {% if key == 0 %}active{% endif %}" id="tab-{{category}}" data-toggle="tab" href="#{{category}}" role="tab" aria-controls="{{category}}" aria-selected="true">
+                        {% if category == "entrees" %} Entrées
+                        {% elseif category == "pizzas" %} Pizzas
+                        {% elseif category == "pates" %} Pâtes
+                        {% elseif category == "salades" %} Salades
+                        {% elseif category == "desserts" %} Desserts
+                        {% elseif category == "boissons" %} Boissons
+                        {% else %} {{category|title}}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+
+            {# <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-menus" data-toggle="tab" href="#menus" role="tab" aria-controls="menus" aria-selected="false">Menus</a>
+            </li> #}
+        </ul>
+
+        <div class="tab-content px-2" id="tab_content{{suffix_val}}">
+            {# CONTENTS (CATEGORIES IN LOOP) #}
+            {% for key, category in enum_category %}
+                <div class="tab-pane fade {% if key == 0 %}show active{% endif %}" id="{{category}}" role="tabpanel" aria-labelledby="tab-{{category}}">
+                    <div class="{{category}} d-flex justify-content-around">
+                        {% if category == "entrees" %}
+                            <img class="menu_carte_pict align-self-center d-none d-sm-block" id="pict_{{category}}{{suffix_val}}" src="public/img/entrees.png" alt="nos entrées">
+                        {% elseif category == "pizzas" %}
+                            <img class="menu_carte_pict align-self-center d-none d-sm-block" id="pict_{{category}}{{suffix_val}}" src="public/img/pizza_2.png" alt="nos pizzas">
+                        {% elseif category == "pates" %}
+                            <div class="d-flex flex-column" id="img_pates{{suffix_val}}">
+                                <p class="small text-center pb-3">Spaghettis, Tagliatelles ou Pennés</p>
+                                <img class="menu_carte_pict align-self-center d-none d-sm-block my-auto" id="pict_{{category}}{{suffix_val}}" src="public/img/pates_1.png" alt="nos pates">
+                            </div>
+                        {% elseif category == "salades" %}
+                            <img class="menu_carte_pict align-self-center d-none d-sm-block" id="pict_{{category}}{{suffix_val}}" src="public/img/salad-png-427.png" alt="nos salades">
+                        {% elseif category == "desserts" %}
+                            <img class="menu_carte_pict align-self-center d-none d-sm-block" id="pict_{{category}}{{suffix_val}}" src="public/img/tiramisu.png" alt="nos desserts">
+                        {% elseif category == "boissons" %}
+                            <img class="menu_carte_pict align-self-center d-none d-sm-block ml-3" id="pict_{{category}}{{suffix_val}}" src="public/img/boissons.png" alt="nos boissons">
+                        {% endif %}
+
+                        <ul class="col-sm-8 col-lg-7 col-xl-6 col-xxl-5 mx-auto">
+                            {% for product in products %}
+                                {% if product.category == category and product.is_orderable != 0 %}
+                                    <li class="product line-height-1 d-flex justify-content-end align-items-center mb-3 mb_product">
+                                        {% if product.is_vegetarian != 0 and product.category != "boissons" %}
+                                            <img class="veg_pict" src="public/img/vegetarian.png" alt="logo plat végétarien">
+                                        {% endif %}
+
+                                        <div class="product_det px-2">
+                                            <div class="d-flex justify-content-between">
+                                                <p class="product_name pr-2">{{product.name}}</p>
+                                                <p class="product_price">{{product.price_ttc}}&nbsp;€</p>
+                                            </div>
+                                            <small class="product_ingredients font-italic">{{product.ingredients}}</small>
+                                        </div>
+
+                                        <div class="ml-1">
+                                            <a href="" data-toggle="modal" data-target="#orderModal_{{product.id}}">
+                                                <img class="icon_bag" src="public/img/bag-red.png" alt="icone sac de commande">
+                                            </a>
+                                            
+                                            {# MODAL ORDER #}
+                                            <div class="orderModal modal fade" id="orderModal_{{product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header border-bottom-0">
+                                                            <h3 class="modal-title text-center">Ajouter à la commande</h3>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                                {# <span aria-hidden="true">&times;</span> #}
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            {# DIV MSG #}
+                                                            <div class="d-flex justify-content-center align-items-center"><div class="msg{{suffix_val}} badge badge-pill mb-2">{{msg_menu}}</div></div>
+
+                                                            {% if product.category != "pates" %}
+                                                                <h4 class="small font-weight-bold mt-2 text-center">{{product.category|upper [0:product.category|length - 1]}}</h4>
+                                                            {% else %}
+                                                                <h4 class="small font-weight-bold mt-2 text-center">{{product.category|upper}}</h4>
+                                                            {% endif %}
+
+                                                            <div class="product_det_modal col-11 px-3 px-sm-5 py-3 mx-auto">
+                                                                <div class="d-flex justify-content-between">
+                                                                    <p class="product_name">{{product.name}}</p>
+                                                                    <p class="product_price"><span>{{product.price_ttc}}</span>&nbsp;€</p>
+                                                                </div>
+                                                                <small class="product_ingredients font-italic">{{product.ingredients}}</small>
+                                                            </div>
+
+                                                            {# FORM : path create here to submit form by Ajax (json) #}
+                                                            <form action="carte?add={{product.id}}" method="POST" data-max_order_qty="{{max_order_qty}}" class="form{{suffix_val}} needs-validation mx-5 my-3" novalidate>
+                                                                {{ form.token }}
+
+                                                                <div class="row justify-content-around align-items-center">
+                                                                    <div class="col-sm-4 d-flex justify-content-center align-items-end p-0">
+                                                                        <img class="symbol_qty minus_symbol" src="public/img/symbol-.png" alt="symbole quantité moins">
+                                                                        
+                                                                        {{ form.input({name: "quantity", value: 1, type: "number", error_text: msg_menu.quantity}, {class: "col-4 col-sm-6 order_qty", class_input: "text-center", suffix: suffix_val, data: "data-max_product_qty="~ max_product_qty}, "required", "readonly") }}
+
+                                                                        <img class="symbol_qty plus_symbol" src="public/img/symbol+.png" alt="symbole quantité plus">
+                                                                    </div>
+
+                                                                    {{ form.button_add({suffix: suffix_val}) }}
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

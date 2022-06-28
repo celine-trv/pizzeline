@@ -1,0 +1,87 @@
+{% extends "base.html.twig" %}
+{% set suffix_val = "_home" %}
+
+{% block main %}
+    <h2>Bienvenue chez Pizzeline</h2>
+
+    {# BLOCK_TABS #}
+    <section class="block_tabs" id="block_tabs{{suffix_val}}">
+        <ul class="nav nav-tabs mb-3" id="tabs{{suffix_val}}" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="tab-presentation" data-toggle="tab" href="#presentation" role="tab" aria-controls="presentation" aria-selected="true">Présentation</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-plat-semaine" data-toggle="tab" href="#plat-semaine" role="tab" aria-controls="plat-semaine" aria-selected="false">Plat de la semaine</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-avis" data-toggle="tab" href="#avis" role="tab" aria-controls="avis" aria-selected="false">Avis clients</a>
+            </li>
+        </ul>
+
+        <div class="tab-content px-2" id="tab_content{{suffix_val}}">
+            {# 1st TAB : PRESENTATION #}
+            <div class="position-relative tab-pane fade show active" id="presentation" role="tabpanel" aria-labelledby="tab-presentation">
+                <div class="presentation d-flex justify-content-around align-items-start">
+                    <img class="restau_pict" id="restau_pict_presentation{{suffix_val}}" src="public/img/Restau_1.jpg" alt="façade restaurant italien Pizzeline">
+
+                    <div class="d-flex flex-column">
+                        <article>
+                            <p>Le restaurant <strong>Pizzeline</strong> vous invite à un voyage gourmand aux couleurs de l'Italie. Venez déguster nos délicieuses pizzas, pastas et autres spécialités italiennes <strong>faites maison</strong>. <br> Toute l'équipe vous attend pour partager un succulent repas dans une ambiance agréable et conviviale. </p>
+                            <p class="my-2">Commandes et réservations 7/7 - 24/24</p>
+
+                            <div class="d-flex flex-wrap align-items-center">
+                                <div class="home_made d-flex align-items-center my-2 mr-5">
+                                    <img src="public/img/home_made.png" alt="logo plat 'fait-maison'">
+                                    <p class="mx-2">Plats faits maison</p>
+                                </div>
+
+                                <div class="vegetarian d-flex align-items-center my-2">
+                                    <img src="public/img/vegetarian.png" alt="logo plat végétarien">
+                                    <p class="mx-2">Plats végétariens</p>
+                                </div>
+                            </div>
+                        </article>
+
+                        <div class="btn{{suffix_val}}">
+                            <button class="button" onclick="window.location.href='carte'">Commander</button>
+                            <button class="button" onclick="window.location.href='reservation'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+                <img id="pict_presentation{{suffix_val}}" src="public/img/pizza_1.png" alt="photo pizza">
+            </div>
+
+            {# 2nd TAB : PLAT SEMAINE (week dish / featured product) #}
+            <div class="tab-pane fade" id="plat-semaine" role="tabpanel" aria-labelledby="tab-plat-semaine">
+                <h3 class="h3_column text-center">Plat de la semaine</h3>
+                <div class="plat-semaine d-flex justify-content-around align-items-start">
+                    <img class="restau_pict align-self-center" id="restau_pict_plat-semaine{{suffix_val}}" src="public/img/carbonara.png" alt="plat de pâtes à la carbonara">
+
+                    <div class="d-flex flex-column">
+                        <article>
+                            <h3 class="text-center mb-3">Plat de la semaine</h3>
+                            <p>Chaque semaine nous vous proposons de (re)découvrir nos meilleurs plats.</p>
+                            <p class="my-2">Et en ce moment, ce sont les <strong>tagliatelles carbonara</strong> du chef qui sont à l'honneur.</p>
+                            <p class="my-2">En commande ou, encore mieux, sur place.</p>
+                            <p class="my-2">Bon appétit !</p>
+                        </article>
+
+                        <div class="btn{{suffix_val}}">
+                            <button class="button" onclick="window.location.href='carte'">Commander</button>
+                            <button class="button" onclick="window.location.href='reservation'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# 3rd TAB : AVIS (reviews) #}
+            <div class="tab-pane fade text-center" id="avis" role="tabpanel" aria-labelledby="tab-avis">
+                <p class="my-5">Avis clients...</p>
+
+                <div class="btn{{suffix_val}}">
+                    <button class="button" onclick="window.location.href='avis-clients'">Laisser un avis</button>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
